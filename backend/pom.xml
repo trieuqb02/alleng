@@ -8,17 +8,27 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.1</version>
+        <relativePath/>
     </parent>
 
     <groupId>com.alleng</groupId>
     <artifactId>All-EnG</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>${revision}</version>
+
     <modules>
-        
+        <module>discovery</module>
+        <module>config</module>
+        <module>common-library</module>
+        <module>api-gateway</module>
+        <module>identity</module>
+        <module>news</module>
+        <module>favourite</module>
     </modules>
 
     <properties>
+        <java.version>22</java.version>
+        <revision>1.0-SNAPSHOT</revision>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

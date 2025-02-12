@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="news" />
+        <module name="discovery" />
+        <module name="identity" />
+        <module name="api-gateway" />
+        <module name="common-library" />
+        <module name="favourite" />
+        <module name="config" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="config (1)" target="22" />
+      <module name="config (2)" target="22" />
+      <module name="config (3)" target="22" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-gateway" options="-parameters" />
+      <module name="common-library" options="-parameters" />
+      <module name="config" options="-parameters" />
+      <module name="discovery" options="-parameters" />
+      <module name="favourite" options="-parameters" />
+      <module name="identity" options="-parameters" />
+      <module name="news" options="-parameters" />
+    </option>
+  </component>
+</project>
