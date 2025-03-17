@@ -1,0 +1,3 @@
+.auth-layout{
+  height: calc(100vh - var(--height-header));
+}

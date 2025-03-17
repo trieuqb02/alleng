@@ -1,0 +1,23 @@
+.dropdown {
+  position: relative;
+  display: block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  border: 1px solid var(--color-background-secondary);
+  background-color: var(--color-background-secondary);
+  box-shadow: 0 2px 4px rgba(114, 167, 220, 0.2);
+  border-radius: 4px;
+  z-index: 1;
+  top: 44px;
+  right: 0;
+}
+
+.dropdown.open .dropdown-content {
+  display: flex;
+  flex-direction: column;
+}
+
+

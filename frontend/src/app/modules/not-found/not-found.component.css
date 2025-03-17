@@ -1,0 +1,34 @@
+.page-notfound{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--color-background-primary);
+}
+
+.section .error{
+  font-size: 12rem;
+  color: var(--color-primary);
+  text-shadow:
+    1px 1px 1px var(--color-secondary),
+    2px 2px 1px var(--color-secondary),
+    3px 3px 1px var(--color-secondary),
+    4px 4px 1px var(--color-secondary),
+    5px 5px 1px var(--color-secondary),
+    6px 6px 1px var(--color-secondary),
+    7px 7px 1px var(--color-secondary),
+    8px 8px 1px var(--color-secondary),
+    25px 25px 8px rgba(0,0,0, 0.2);
+}
+
+.page{
+  margin: 2rem 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.back-home{
+  display: inline-block;
+}

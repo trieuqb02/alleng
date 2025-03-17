@@ -1,0 +1,32 @@
+.footer {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: var(--color-primary);
+  padding: 10px 20px;
+  color: #ffffff;
+  text-align: center;
+  width: 100%;
+  height: 34px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-section {
+  flex: 1;
+  text-align: center;
+}
+
+.footer-section a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-section a:hover {
+  text-decoration: underline;
+}
+
+

@@ -1,0 +1,132 @@
+<form class="l-r-form form-container box-shadow-xs border-radius-xs" [formGroup]="registerForm">
+  <div class="form-group">
+    <input
+      (click)="cancelError()"
+      [class.error]="f['lastName'].errors && submitted"
+      formControlName="lastName"
+      class="form-group-input border-radius-sm"
+      type="text"
+      id="lastName"
+      name="lastName"
+      placeholder="Enter lastname"
+    />
+    <div class="form-group-error">
+      @if (f['lastName'].errors && f['lastName'].errors!['required'] && submitted) {
+        <span>Pls enter lastname</span>
+      } @else if (f['lastName'].errors && f['lastName'].errors!['maxlength'] && submitted) {
+        <span>Lastname less than 255 characters</span>
+      }
+    </div>
+  </div>
+  <div class="form-group">
+    <input
+      (click)="cancelError()"
+      [class.error]="f['firstName'].errors && submitted"
+      formControlName="firstName"
+      class="form-group-input border-radius-sm"
+      type="text"
+      id="firstName"
+      name="firstName"
+      placeholder="Enter firstname"
+    />
+    <div class="form-group-error">
+      @if (f['firstName'].errors && f['firstName'].errors!['required'] && submitted) {
+        <span>Pls enter firstname</span>
+      } @else if (f['firstName'].errors && f['firstName'].errors!['maxlength'] && submitted) {
+        <span>Firstname less than 255 characters</span>
+      }
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input
+      (click)="cancelError()"
+      [class.error]="f['username'].errors && submitted"
+      formControlName="username"
+      class="form-group-input border-radius-sm"
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Enter username"
+    />
+    <div class="form-group-error">
+      @if (f['username'].errors && f['username'].errors!['required'] && submitted) {
+        <span>Pls enter username</span>
+      } @else if (f['username'].errors && f['username'].errors!['maxlength'] && submitted) {
+        <span>Username less than 255 characters</span>
+      } @else if (messageError && submitted) {
+        <span>{{ messageError }}</span>
+      }
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input
+      (click)="cancelError()"
+      [class.error]="f['password'].errors && submitted"
+      formControlName="password"
+      class="form-group-input border-radius-sm"
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Enter password"
+    />
+    <div class="form-group-error">
+      @if (f['password'].errors && f['password'].errors!['minlength'] &&
+      submitted) {
+        <span>Password is less 6 characters</span>
+      } @else if (f['password'].errors && f['password'].errors!['required'] &&
+      submitted) {
+        <span>Pls enter password</span>
+      } @else if (f['password'].errors && f['password'].errors!['maxlength'] && submitted) {
+        <span>Password less than 255 characters</span>
+      }
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input
+      (click)="cancelError()"
+      [class.error]="f['confirmPassword'].errors && submitted"
+      formControlName="confirmPassword"
+      class="form-group-input border-radius-sm"
+      type="password"
+      id="confirmPassword"
+      name="confirmPassword"
+      placeholder="Enter confirm password"
+    />
+    <div class="form-group-error">
+      @if (f['confirmPassword'].errors &&
+      f['confirmPassword'].errors!['matching'] && submitted) {
+        <span>Confirm password isn't correct</span>
+      } @else if (f['confirmPassword'].errors &&
+      f['confirmPassword'].errors!['required'] && submitted) {
+        <span>Pls confirm password</span>
+      }
+    </div>
+  </div>
+
+  <div class="form-group">
+    <app-button
+      [buttonClass]="'primary'"
+      [borderRadius]="'24px'"
+      (click)="onSubmit()"
+    >
+      Register
+    </app-button>
+  </div>
+  <div class="flex-container flex-row-reverse mtb-16">
+    <a routerLink="/auth/login" class="page-link" href=""
+    >Sign in</a
+    >
+  </div>
+  <span class="or mtb-16">or</span>
+  <div class="flex-container justify-center">
+    <app-oauth2-button [oauth2Type]="'facebook'">
+      <i class="fa-brands fa-facebook fb"></i>
+    </app-oauth2-button>
+    <app-oauth2-button [oauth2Type]="'google'">
+      <i class="fa-brands fa-google gg"></i>
+    </app-oauth2-button>
+  </div>
+</form>

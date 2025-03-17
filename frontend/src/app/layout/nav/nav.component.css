@@ -1,0 +1,50 @@
+.navbar {
+  overflow: auto;
+  width: 250px;
+  background-color: var(--color-background-primary);
+  height: calc(100vh - 64px - 34px);
+}
+
+.navbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.navbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius-md);
+}
+
+.navbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-secondary);
+}
+
+.navbar::-webkit-scrollbar-track {
+  background-color: var(--color-white);
+}
+
+.navbar-links {
+  margin: 0;
+  list-style: none;
+  padding: 6px;
+}
+
+.navbar-links-item a {
+  padding: 6px;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-md);
+  text-decoration: none;
+  display: block;
+  color: var(--color-text-black);
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar-links-item a:hover {
+  color: var(--color-text-white);
+  background-color: var(--color-primary);
+}
+
+.navbar-links-item a.active {
+  color: var(--color-text-white);
+  background-color: var(--color-secondary);
+}

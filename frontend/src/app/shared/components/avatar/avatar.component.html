@@ -1,0 +1,8 @@
+<div class="avatar-block">
+  <div class="avatar" [style]="{ width: size() + 'px', height: size() + 'px' }">
+    <img [src]="src()" [alt]="alt()" />
+  </div>
+  <div class="name">
+    <ng-content></ng-content>
+  </div>
+</div>

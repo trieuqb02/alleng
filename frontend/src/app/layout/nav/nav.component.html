@@ -1,0 +1,12 @@
+<nav class="navbar box-shadow-md">
+  <ul class="navbar-links">
+    @for (item of links; track $index) {
+      <li class="navbar-links-item">
+        <a [routerLink]="item.url" routerLinkActive="active">
+          <i [class]="item.icon"></i>
+          {{ item.name }}
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

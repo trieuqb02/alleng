@@ -1,0 +1,53 @@
+<div class="header-layout">
+  <div class="header-container">
+    <div class="toolbar flex-container">
+      <div class="grid wide flex-container">
+        <div class="flex-container align-center">
+          <a href="#" class="logo">
+            <img [src]="'images/ic_logo_web.png'" width="184" height="44" alt="logo">
+          </a>
+          <div class="nav-list">
+            @for (item of links; track $index) {
+              <a class="nav-item" [routerLink]="item.url" routerLinkActive="active">
+                <i [class]="item.icon"></i>
+                {{ item.name }}
+              </a>
+            }
+          </div>
+        </div>
+        <span class="spacer"></span>
+        <div class="flex-container justify-center align-center">
+          @if (isLoggedIn) {
+            <app-dropdown>
+              <app-avatar dropdown-menu-button [src]="user.thumbnail ? user.thumbnail : 'images/user-default.png'" [size]="36" [alt]="'Ảnh đại diện'">
+                <span>{{ user.fullName }}</span>
+              </app-avatar>
+              @for (item of menu; track $index) {
+                <app-button
+                  [buttonClass]="'menu-btn'"
+                  dropdown-item
+                  [type]="'button'"
+                  [position]="'start'"
+                  (click)="handleClick(item)"
+                >
+                  <i [class]="item.icon"></i>
+                  {{ item.name }}
+                </app-button>
+              }
+            </app-dropdown>
+          } @else {
+            <a class="nav-item" routerLink="auth/login" routerLinkActive="active">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>Login</span>
+              <div class="pipe"></div>
+            </a>
+            <a class="nav-item" routerLink="auth/register" routerLinkActive="active">
+              <i class="fa-solid fa-registered"></i>
+              <span>Register</span>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

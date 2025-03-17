@@ -1,1 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+@import '@fortawesome/fontawesome-free/css/all.css';
+@import url(../src/assets/css/base.css);
+@import url(../src/assets/css/flexbox.css);
+@import url(../src/assets/css/form.css);
+@import url(../src/assets/css/spacing.css);
+@import url(../src/assets/css/custom.css);
+@import url(../src/assets/css/shadow.css);
