@@ -1,0 +1,75 @@
+<form class="l-r-form form-container box-shadow-xs border-radius-xs" [formGroup]="loginInForm">
+  <div class="form-group">
+    <input
+      (click)="cancelError()"
+      [class.error]="f['username'].errors && submitted"
+      formControlName="username"
+      class="form-group-input border-radius-sm"
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Enter username"
+    />
+    <div class="form-group-error">
+      @if (f['username'].errors && f['username'].errors!['required'] && submitted) {
+        <span>Pls enter username</span>
+      } @else if (f['username'].errors && f['username'].errors!['maxlength'] && submitted) {
+        <span>Username less than 255 characters</span>
+      }
+    </div>
+  </div>
+  <div class="form-group">
+    <input
+      (click)="cancelError()"
+      [class.error]="f['password'].errors && submitted"
+      formControlName="password"
+      class="form-group-input border-radius-sm"
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Enter password"
+    />
+    <div class="form-group-error">
+      @if (f['password'].errors && f['password'].errors!['required'] && submitted) {
+        <span>Pls enter password</span>
+      } @else if (f['password'].errors && f['password'].errors!['minlength'] && submitted) {
+        <span>Password more than 6 characters</span>
+      } @else if (f['password'].errors && f['password'].errors!['maxlength'] && submitted) {
+        <span>Password less than 255 characters</span>
+      }
+    </div>
+  </div>
+  <div class="form-group flex-container">
+    <span>Save account</span>
+    <input type="checkbox"/>
+  </div>
+  <div class="form-group">
+    <app-button
+      [buttonClass]="'primary'"
+      [borderRadius]="'24px'"
+      (click)="onSubmit()"
+    >
+      Login
+    </app-button>
+    @if (error && submitted) {
+      <div class="form-group-error text-align-center mt-10">
+        {{ error }}
+      </div>
+    }
+
+  </div>
+  <div class="flex-container flex-row-reverse mtb-16">
+    <a routerLink="/auth/register" class="page-link" href=""
+    >Sign up</a
+    >
+  </div>
+  <span class="or mtb-16">or</span>
+  <div class="flex-container justify-center">
+    <app-oauth2-button [oauth2Type]="'facebook'">
+      <i class="fa-brands fa-facebook fb"></i>
+    </app-oauth2-button>
+    <app-oauth2-button [oauth2Type]="'google'">
+      <i class="fa-brands fa-google gg"></i>
+    </app-oauth2-button>
+  </div>
+</form>

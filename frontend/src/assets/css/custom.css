@@ -1,0 +1,67 @@
+.custom-back-filter-button i{
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+}
+
+.custom-filter-button{
+  background: var(--color-secondary);
+  color: var(--color-white);
+  font-size: var(--font-size-xs);
+  height: 32px;
+  min-width: 100px;
+}
+
+.custom-filter-button i{
+  font-size: var(--font-size-xs);
+}
+
+.menu-btn{
+  min-width: 160px;
+}
+
+.notification{
+  background-color: var(--color-white);
+  width: 360px;
+}
+
+.notification-title {
+  font-size: var(--font-size-md);
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.notification-content {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 10px;
+  height: 70px;
+}
+
+/* customer toastr-color */
+.toast-success {
+  background-color: var(--color-green) !important; /* Màu nền */
+  color: var(--color-white) !important; /* Màu chữ */
+}
+
+/* Tùy chỉnh thông báo lỗi */
+.toast-error {
+  background-color: var(--color-red) !important; /* Màu nền */
+  color: var(--color-white) !important; /* Màu chữ */
+}
+
+/* Tùy chỉnh thông báo cảnh báo */
+.toast-warning {
+  background-color: var(--color-orange) !important;
+  color: var(--color-white) !important;
+}
+
+/* Tùy chỉnh thông báo thông tin */
+.toast-info {
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+}
+
+
+

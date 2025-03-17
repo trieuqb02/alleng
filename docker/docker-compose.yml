@@ -1,0 +1,22 @@
+services:
+
+ mysql:
+    image: mysql:8.0.30
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: bqt020402
+      MYSQL_PASSWORD: bqt020402
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  mysql:

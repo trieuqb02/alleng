@@ -1,0 +1,59 @@
+/* margin */
+.m-4{
+    margin: 4px;
+}
+
+.m-8{
+    margin: 8px;
+}
+
+.m-10{
+    margin: 10px;
+}
+
+.mr-6{
+    margin-right: 6px;
+}
+
+.mr-10{
+  margin-right: 10px;
+}
+
+.mtb-16{
+    margin: 16px 0;
+}
+
+.mt-10{
+  margin-top: 10px;
+}
+
+.mt-20{
+  margin-top: 20px;
+}
+
+.mb-10{
+  margin-bottom: 10px;
+}
+
+.mb-16{
+  margin-bottom: 16px;
+}
+
+.my-6{
+  margin: 6px 0;
+}
+
+
+/* padding */
+.p-4{
+    padding: 4px;
+}
+
+.p-8{
+    padding: 8px;
+}
+
+.p-10{
+    padding: 10px;
+}
+
