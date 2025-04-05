@@ -6,11 +6,16 @@ import java.util.Date;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ErrorVM(String status, String message, List<Error> errors, Date timestamp) {
+public record ErrorVM(String errorCode, String message, List<FieldError> fieldErrors, Date timestamp) {
 
-    public record Error(String field, String message){ }
+    public record FieldError(String field, String message) {
+    }
 
-    public ErrorVM(String status, String message, List<Error> errors) {
+    public ErrorVM(String status, String message, List<FieldError> errors) {
         this(status, message, errors, new Date());
+    }
+
+    public ErrorVM(String status, String message) {
+        this(status, message, null, new Date());
     }
 }

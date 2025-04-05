@@ -1,6 +1,6 @@
 package com.alleng.identity.service;
 
-import com.alleng.commonlibrary.constant.ApiConstant;
+import com.alleng.commonlibrary.constant.ErrorCode;
 import com.alleng.commonlibrary.exception.BadRequestException;
 import com.alleng.commonlibrary.exception.NotFoundException;
 import com.alleng.identity.entity.KeyStore;
@@ -9,7 +9,6 @@ import com.alleng.identity.payload.request.UserVm;
 import com.alleng.identity.payload.response.UserMV;
 import com.alleng.identity.repository.UserRepository;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,7 +40,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserMV getUser(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ACCOUNT_NOT_FOUND, userId));
         return UserMV.convertUserMV(user);
     }
 
@@ -49,7 +48,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserMV updateUser(UUID userId, UserVm userVm) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ACCOUNT_NOT_FOUND, userId));
 
         user.setFullName(userVm.fullName());
         user.setEmail(user.getEmail());
@@ -57,8 +56,8 @@ public class UserServiceImpl implements IUserService {
             boolean checkPassword = passwordEncoder.matches(userVm.oldPassword(), user.getPassword());
             if(checkPassword){
                 user.setPassword(passwordEncoder.encode(userVm.newPassword()));
-            } else{
-                throw new BadRequestException(ApiConstant.BAD_REQUEST, "The old password wrong");
+            } else {
+                throw new BadRequestException(ErrorCode.PASSWORD_WRONG);
             }
         }
 
@@ -68,7 +67,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public KeyStore getKeyStoreFromUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, username));
         return user.getKeyStore();
     }
 }

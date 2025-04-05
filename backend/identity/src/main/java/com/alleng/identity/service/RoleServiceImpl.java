@@ -1,6 +1,6 @@
 package com.alleng.identity.service;
 
-import com.alleng.commonlibrary.constant.ApiConstant;
+import com.alleng.commonlibrary.constant.ErrorCode;
 import com.alleng.commonlibrary.exception.BadRequestException;
 import com.alleng.commonlibrary.exception.NotFoundException;
 import com.alleng.identity.entity.Permission;
@@ -40,27 +40,34 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional
     @Override
     public RoleMV createRole(RoleVM roleVM) {
-        try {
-            Role role = new Role();
-            Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(roleVM.permissions()));
-            role.setName(roleVM.name());
-            role.setDescription(roleVM.description());
-            role.setPermissions(permissions);
-            return RoleMV.convertRoleMV(roleRepository.save(role));
-        } catch (Exception e) {
-            throw new BadRequestException(ApiConstant.CODE_400, e.getMessage());
+        boolean checkName = roleRepository.existsByName(roleVM.name());
+        if(checkName){
+            throw new BadRequestException(ErrorCode.ROLE_NAME_EXIST, roleVM.name());
         }
+        Role role = new Role();
+        Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(roleVM.permissions()));
+        role.setName(roleVM.name());
+        role.setDescription(roleVM.description());
+        role.setPermissions(permissions);
+        return RoleMV.convertRoleMV(roleRepository.save(role));
     }
 
     @Transactional
     @Override
     public RoleMV updateRole(UUID id, RoleVM roleVM) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_400, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ROLE_NOT_FOUND, id));
 
         Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(roleVM.permissions()));
 
-        role.setName(roleVM.name());
+        if(!role.getName().equals(roleVM.name())){
+
+            boolean checkName = roleRepository.existsByName(roleVM.name());
+            if(checkName){
+                throw new BadRequestException(ErrorCode.ROLE_NAME_EXIST, roleVM.name());
+            }
+            role.setName(roleVM.name());
+        }
         role.setDescription(roleVM.description());
         role.setPermissions(permissions);
 
@@ -71,7 +78,7 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public RoleMV getRole(UUID id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_400, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ROLE_NOT_FOUND, id));
 
         return RoleMV.convertRoleMV(roleRepository.save(role));
     }

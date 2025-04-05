@@ -1,30 +1,36 @@
 package com.alleng.identity.config;
 
-import com.alleng.commonlibrary.constant.ApiConstant;
+import com.alleng.commonlibrary.constant.ErrorCode;
+import com.alleng.commonlibrary.exception.CustomException;
+import com.alleng.commonlibrary.exception.Oauth2AuthenticationEntryPoint;
+import com.alleng.commonlibrary.util.JwtUtilCommon;
 import com.alleng.identity.entity.KeyStore;
-import com.alleng.identity.security.Oauth2AuthenticationEntryPoint;
 import com.alleng.identity.utils.JwtUtil;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2Error;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
 import java.util.List;
 
 @Slf4j
@@ -39,17 +45,20 @@ public class SecurityConfig {
     @Value("#{'${com.alleng.public.endpoints}'.split(',')}")
     private List<String> publicEndpoints;
 
-    private final JwtUtil jwtUtil;
-
+    @Qualifier("delegatedAuthenticationEntryPoint")
     private final Oauth2AuthenticationEntryPoint oauth2AuthenticationEntryPoint;
 
+    private final JwtUtil jwtUtil;
+
+    private final JwtUtilCommon jwtUtilCommon;
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         List<String> formattedEndpoints = publicEndpoints.stream()
                 .map(endpoint -> prefixApi + endpoint)
                 .toList();
@@ -63,6 +72,7 @@ public class SecurityConfig {
                         .jwt(jwt -> jwt
                                 .decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
+
                         )
                         .authenticationEntryPoint(oauth2AuthenticationEntryPoint)
                 )
@@ -73,17 +83,21 @@ public class SecurityConfig {
     public JwtDecoder jwtDecoder() {
         return token -> {
             try {
-                JWTClaimsSet claimsSet = jwtUtil.decodeToken(token);
+                JWTClaimsSet claimsSet = jwtUtilCommon.decodeToken(token);
 
                 String username = claimsSet.getSubject();
 
                 KeyStore keyStore = jwtUtil.getKeyStore(username);
 
-                PublicKey rsaPublicKey = jwtUtil.getPublicKeyFromBase64(keyStore.getPublicKey());
+                PublicKey rsaPublicKey = jwtUtilCommon.getPublicKeyFromBase64(keyStore.getPublicKey());
 
                 return NimbusJwtDecoder.withPublicKey((RSAPublicKey) rsaPublicKey).build().decode(token);
-            } catch (Exception e) {
-                throw new OAuth2AuthenticationException(new OAuth2Error(ApiConstant.CODE_401, e.getMessage(), null));
+            } catch (ParseException parseException) {
+                CustomException customException = new CustomException(ErrorCode.DECODE_TOKEN_FAIL, token);
+                throw new OAuth2AuthenticationException(new OAuth2Error(customException.getErrorCode().getCode(), customException.getMessage(), null));
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException specException) {
+                CustomException customException = new CustomException(ErrorCode.INVALID_TOKEN, token);
+                throw new OAuth2AuthenticationException(new OAuth2Error(customException.getErrorCode().getCode(), customException.getMessage(), null));
             }
         };
     }
