@@ -16,4 +16,6 @@ public interface IAuthService {
     boolean introspect(String token);
 
     SetTokenMV refresh(UUID userId, String token);
+
+    String getPublicKeyByUsername(String username);
 }

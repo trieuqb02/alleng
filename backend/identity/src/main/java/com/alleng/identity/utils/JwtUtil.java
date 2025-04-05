@@ -1,13 +1,13 @@
 package com.alleng.identity.utils;
 
-import com.alleng.commonlibrary.constant.ApiConstant;
-import com.alleng.commonlibrary.exception.BadRequestException;
+import com.alleng.commonlibrary.constant.ErrorCode;
+import com.alleng.commonlibrary.exception.TokenException;
 import com.alleng.identity.constant.TokenType;
 import com.alleng.identity.entity.KeyStore;
 import com.alleng.identity.entity.Permission;
 import com.alleng.identity.entity.User;
-import com.alleng.identity.repository.UserRepository;
 import com.alleng.identity.service.IUserService;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.RSASSASigner;
@@ -59,8 +59,10 @@ public class JwtUtil {
 
             // Convert to String
             return signedJWT.serialize();
-        } catch (Exception e) {
-            throw new BadRequestException(ApiConstant.CODE_400, ApiConstant.ERROR_TOKEN);
+        } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+            throw new TokenException(ErrorCode.ALGORITHM_TOKEN);
+        } catch (InvalidKeySpecException | JOSEException invalidKeySpecException) {
+            throw new TokenException(ErrorCode.INVALID_TOKEN);
         }
     }
 
@@ -96,37 +98,26 @@ public class JwtUtil {
             PublicKey publicKey = keyFactory.generatePublic(keySpec);
             SignedJWT signedJWT = SignedJWT.parse(token);
             return signedJWT.verify(new RSASSAVerifier((RSAPublicKey) publicKey));
-        } catch (Exception e){
-            throw new BadRequestException(ApiConstant.CODE_400, ApiConstant.ERROR_VERIFY_TOKEN);
+        } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+            throw new TokenException(ErrorCode.ALGORITHM_TOKEN, token);
+        } catch (InvalidKeySpecException | JOSEException invalidKeySpecException) {
+            throw new TokenException(ErrorCode.INVALID_TOKEN, token);
+        } catch (ParseException parseException) {
+            throw new TokenException(ErrorCode.DECODE_TOKEN_FAIL, token);
         }
     }
 
-    public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        return keyPairGenerator.generateKeyPair();
+    public KeyPair generateKeyPair() {
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048);
+            return keyPairGenerator.generateKeyPair();
+        } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+            throw new TokenException(ErrorCode.ALGORITHM_TOKEN);
+        }
     }
 
-    public JWTClaimsSet decodeToken(String token) throws ParseException {
-        SignedJWT signedJWT = SignedJWT.parse(token);
-        return signedJWT.getJWTClaimsSet();
-    }
-
-    public KeyStore getKeyStore(String username){
+    public KeyStore getKeyStore(String username) {
         return userService.getKeyStoreFromUsername(username);
     }
-
-    public PublicKey getPublicKeyFromBase64(String publicKeyBase64) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] keyBytes = Base64.getDecoder().decode(publicKeyBase64);
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-       return keyFactory.generatePublic(keySpec);
-    };
-
-    public PrivateKey getPrivateKeyFromBase64(String privateKeyBase64) throws NoSuchAlgorithmException, InvalidKeySpecException{
-        byte[] keyBytes = Base64.getDecoder().decode(privateKeyBase64);
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePrivate(keySpec);
-    };
 }

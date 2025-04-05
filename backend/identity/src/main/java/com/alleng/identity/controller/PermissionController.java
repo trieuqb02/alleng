@@ -1,5 +1,6 @@
 package com.alleng.identity.controller;
 
+import com.alleng.commonlibrary.payload.ApiVM;
 import com.alleng.identity.payload.response.PermissionMV;
 import com.alleng.identity.service.IPermissionService;
 import lombok.AccessLevel;
@@ -24,8 +25,9 @@ public class PermissionController {
 
     @PreAuthorize("READ_PERMISSIONS")
     @GetMapping("")
-    public ResponseEntity<List<PermissionMV>> getAll(){
+    public ResponseEntity<ApiVM<List<PermissionMV>>> getAll() {
         List<PermissionMV> mvList = permissionService.getAll();
-        return ResponseEntity.status(HttpStatus.OK).body(mvList);
+        ApiVM<List<PermissionMV>> apiVM = new ApiVM<>(mvList);
+        return ResponseEntity.status(HttpStatus.OK).body(apiVM);
     }
 }

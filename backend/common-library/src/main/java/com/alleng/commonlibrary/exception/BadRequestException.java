@@ -1,16 +1,9 @@
 package com.alleng.commonlibrary.exception;
 
-import com.alleng.commonlibrary.payload.ErrorVM.Error;
+import com.alleng.commonlibrary.constant.ErrorCode;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class BadRequestException extends CustomException{
-    public BadRequestException(String errorCode,String message) {
-        super(errorCode,message, new ArrayList<>());
-    }
-
-    public BadRequestException(String errorCode,String message, List<Error> errors) {
-        super(errorCode,message, errors);
+public class BadRequestException extends CustomException {
+    public BadRequestException(ErrorCode errorCode, Object... args) {
+        super(errorCode, args);
     }
 }

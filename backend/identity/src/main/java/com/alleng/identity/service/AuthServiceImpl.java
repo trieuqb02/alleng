@@ -1,8 +1,11 @@
 package com.alleng.identity.service;
 
-import com.alleng.commonlibrary.constant.ApiConstant;
+import com.alleng.commonlibrary.constant.ErrorCode;
+import com.alleng.commonlibrary.exception.BadCredentialsException;
 import com.alleng.commonlibrary.exception.BadRequestException;
 import com.alleng.commonlibrary.exception.NotFoundException;
+import com.alleng.commonlibrary.exception.TokenException;
+import com.alleng.commonlibrary.util.JwtUtilCommon;
 import com.alleng.identity.constant.Provider;
 import com.alleng.identity.constant.TokenType;
 import com.alleng.identity.entity.KeyStore;
@@ -36,6 +39,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class AuthServiceImpl implements IAuthService {
+
     UserRepository userRepository;
 
     PasswordEncoder passwordEncoder;
@@ -46,52 +50,55 @@ public class AuthServiceImpl implements IAuthService {
 
     JwtUtil jwtUtil;
 
+    JwtUtilCommon jwtUtilCommon;
+
     @Transactional
     @Override
     public SetTokenMV login(LoginVM loginVM) {
-        try {
-            User user = userRepository.findByUsername(loginVM.username())
-                    .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, "username " + ApiConstant.NOT_FOUND));
 
-            boolean checkPassword = passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(user.getPassword()));
+        User user = userRepository.findByUsername(loginVM.username())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, loginVM.username()));
 
-            if(!checkPassword){
-                throw new BadRequestException(ApiConstant.BAD_REQUEST, "password wrong");
-            }
-
-            KeyPair keyPair = jwtUtil.generateKeyPair();
-            String privateKey = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
-            String publicKey = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
-
-            String accessToken = jwtUtil.generateToken(privateKey, user, TokenType.ACCESS_TOKEN);
-            String refreshToken = jwtUtil.generateToken(privateKey, user, TokenType.REFRESH_TOKEN);
-
-            KeyStore keyStore = KeyStore.builder()
-                    .refreshToken(refreshToken)
-                    .privateKey(privateKey)
-                    .publicKey(publicKey)
-                    .user(user)
-                    .build();
-            keyStoreRepository.save(keyStore);
-
-            String[] roles = user.getRoles().stream().map(Role::getName).toArray(String[]::new);
-
-            return new SetTokenMV(TokenType.BEARER, accessToken, refreshToken, roles );
-        } catch (Exception e){
-            throw new BadRequestException(ApiConstant.CODE_400, e.getMessage());
+        boolean checkPassword = passwordEncoder.matches(loginVM.password(), user.getPassword());
+        if (!checkPassword) {
+            throw new BadCredentialsException(ErrorCode.PASSWORD_WRONG, loginVM.password());
         }
+
+        if (user.getKeyStore() != null) {
+            keyStoreRepository.delete(user.getKeyStore());
+        }
+
+        KeyPair keyPair = jwtUtil.generateKeyPair();
+        String privateKey = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
+        String publicKey = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+
+        String accessToken = jwtUtil.generateToken(privateKey, user, TokenType.ACCESS_TOKEN);
+        String refreshToken = jwtUtil.generateToken(privateKey, user, TokenType.REFRESH_TOKEN);
+
+        KeyStore keyStore = KeyStore.builder()
+                .refreshToken(refreshToken)
+                .privateKey(privateKey)
+                .publicKey(publicKey)
+                .user(user)
+                .build();
+        keyStoreRepository.save(keyStore);
+
+        String[] roles = user.getRoles().stream().map(Role::getName).toArray(String[]::new);
+
+        return new SetTokenMV(TokenType.BEARER, accessToken, refreshToken, roles);
+
     }
 
     @Transactional
     @Override
     public SetTokenMV register(UserVm userVm) {
         boolean checkUsername = userRepository.existsByUsername(userVm.username());
-        if(checkUsername){
-            throw new BadRequestException(ApiConstant.CODE_400, "username " + ApiConstant.EXIST);
+        if (checkUsername) {
+            throw new BadRequestException(ErrorCode.USERNAME_EXIST, userVm.username());
         }
 
         Role role = roleRepository.findByName("USER")
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ROLE_NOT_FOUND));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
 
@@ -112,7 +119,7 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public void logout(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ACCOUNT_NOT_FOUND, userId));
 
         keyStoreRepository.delete(user.getKeyStore());
     }
@@ -121,14 +128,14 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public boolean introspect(String token) {
         try {
-            JWTClaimsSet claimsSet = jwtUtil.decodeToken(token);
-
-            User user = userRepository.findByUsername(claimsSet.getSubject())
-                    .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, ApiConstant.NOT_FOUND));
+            JWTClaimsSet claimsSet = jwtUtilCommon.decodeToken(token);
+            String username = claimsSet.getSubject();
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, username));
             return jwtUtil.verifyToken(user.getKeyStore().getPublicKey(), token);
 
-        } catch (ParseException e){
-            throw new BadRequestException(ApiConstant.BAD_REQUEST, "Decode token Fail!");
+        } catch (ParseException e) {
+            throw new TokenException(ErrorCode.DECODE_TOKEN_FAIL, token);
         }
     }
 
@@ -136,18 +143,25 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public SetTokenMV refresh(UUID userId, String refreshToken) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ApiConstant.CODE_404, ApiConstant.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         boolean verifyToken = jwtUtil.verifyToken(user.getKeyStore().getPublicKey(), refreshToken);
         boolean compareToken = refreshToken.equals(user.getKeyStore().getRefreshToken());
 
-        if(compareToken && verifyToken){
+        if (compareToken && verifyToken) {
             String accessToken = jwtUtil.generateToken(user.getKeyStore().getPrivateKey(), user, TokenType.ACCESS_TOKEN);
             String[] roles = user.getRoles().stream().map(Role::getName).toArray(String[]::new);
 
-            return new SetTokenMV(TokenType.BEARER, accessToken, refreshToken, roles );
-        } else{
-            throw new BadRequestException(ApiConstant.CODE_400, ApiConstant.BAD_REQUEST);
+            return new SetTokenMV(TokenType.BEARER, accessToken, refreshToken, roles);
+        } else {
+            throw new BadRequestException(ErrorCode.INVALID_TOKEN, refreshToken);
         }
+    }
+
+    @Override
+    public String getPublicKeyByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, username));
+        return user.getKeyStore().getPublicKey();
     }
 }

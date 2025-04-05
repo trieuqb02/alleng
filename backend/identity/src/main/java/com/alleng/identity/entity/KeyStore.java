@@ -15,7 +15,7 @@ import java.util.UUID;
 public class KeyStore {
 
     @Id
-    private UUID id;;
+    private UUID id;
 
     @Column(columnDefinition = "TEXT")
     private String refreshToken;

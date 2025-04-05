@@ -1,21 +1,20 @@
 package com.alleng.commonlibrary.exception;
 
-import com.alleng.commonlibrary.payload.ErrorVM.Error;
+import com.alleng.commonlibrary.constant.ErrorCode;
 import lombok.Getter;
-
-import java.util.List;
+import org.springframework.http.HttpStatus;
 
 
 @Getter
 public class CustomException extends RuntimeException {
-    private final String message;
-    private final String errorCode;
-    private final List<Error> errors;
+    private final ErrorCode errorCode;
+    private final HttpStatus status;
+    private final String errorMessage;
 
-    public CustomException(String errorCode, String message, List<Error> errors) {
-        super(message);
-        this.message = message;
+    public CustomException(ErrorCode errorCode, Object... args) {
+        super(errorCode.formatMessage(args));
         this.errorCode = errorCode;
-        this.errors = errors;
+        this.status = errorCode.getStatus();
+        this.errorMessage = errorCode.formatMessage(args);
     }
 }

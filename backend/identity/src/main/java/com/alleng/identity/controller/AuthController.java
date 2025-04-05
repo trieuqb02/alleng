@@ -1,6 +1,5 @@
 package com.alleng.identity.controller;
 
-import com.alleng.commonlibrary.constant.ApiConstant;
 import com.alleng.commonlibrary.payload.ApiVM;
 import com.alleng.identity.payload.request.LoginVM;
 import com.alleng.identity.payload.request.UserVm;
@@ -13,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,39 +22,43 @@ public class AuthController {
 
     IAuthService authService;
 
+    @GetMapping("/public-key/{username}")
+    public ResponseEntity<String> getPublicKey(@PathVariable String username) {
+        String publicKey = authService.getPublicKeyByUsername(username);
+        return ResponseEntity.status(HttpStatus.OK).body(publicKey);
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<ApiVM<SetTokenMV>> login(@RequestBody LoginVM loginVM){
+    public ResponseEntity<ApiVM<SetTokenMV>> login(@RequestBody LoginVM loginVM) {
         SetTokenMV setTokenMV = authService.login(loginVM);
-        ApiVM<SetTokenMV> apiVM = new ApiVM<>(ApiConstant.CODE_200, "user login successfully" ,setTokenMV);
+        ApiVM<SetTokenMV> apiVM = new ApiVM<>("user login successfully", setTokenMV);
         return ResponseEntity.status(HttpStatus.CREATED).body(apiVM);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiVM<SetTokenMV>> register(@RequestBody UserVm userVm){
+    public ResponseEntity<ApiVM<SetTokenMV>> register(@RequestBody UserVm userVm) {
         SetTokenMV setTokenMV = authService.register(userVm);
-        ApiVM<SetTokenMV> apiVM = new ApiVM<>(ApiConstant.CODE_200, "user register successfully" ,setTokenMV);
+        ApiVM<SetTokenMV> apiVM = new ApiVM<>("user register successfully", setTokenMV);
         return ResponseEntity.status(HttpStatus.OK).body(apiVM);
     }
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<ApiVM<SetTokenMV>> refreshToken(@RequestParam String token, @RequestParam UUID userId){
+    public ResponseEntity<ApiVM<SetTokenMV>> refreshToken(@RequestParam String token, @RequestParam UUID userId) {
         SetTokenMV setTokenMV = authService.refresh(userId, token);
-        ApiVM<SetTokenMV> apiVM = new ApiVM<>(ApiConstant.CODE_200, "refresh token successfully" ,setTokenMV);
+        ApiVM<SetTokenMV> apiVM = new ApiVM<>("refresh token successfully", setTokenMV);
         return ResponseEntity.status(HttpStatus.OK).body(apiVM);
     }
 
-    @GetMapping("/introspect")
-    public ResponseEntity<ApiVM<Map<String, Boolean>>> introspect(@RequestParam String token){
+    @GetMapping(value = "/introspect")
+    public ResponseEntity<Boolean> introspect(@RequestParam String token) {
         boolean introspect = authService.introspect(token);
-        Map<String, Boolean> responseData = Collections.singletonMap("introspect", introspect);
-        ApiVM<Map<String, Boolean>> apiVM = new ApiVM<>(ApiConstant.CODE_200, "successful", responseData);
-        return ResponseEntity.status(HttpStatus.OK).body(apiVM);
+        return ResponseEntity.status(HttpStatus.OK).body(introspect);
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<ApiVM<?>> logout(@RequestParam UUID userId){
+    public ResponseEntity<ApiVM<?>> logout(@RequestParam UUID userId) {
         authService.logout(userId);
-        ApiVM<?> apiVM = new ApiVM<>(ApiConstant.CODE_200, "user logout successfully");
+        ApiVM<?> apiVM = new ApiVM<>("user logout successfully", null);
         return ResponseEntity.status(HttpStatus.OK).body(apiVM);
     }
 }

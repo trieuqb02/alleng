@@ -1,9 +1,9 @@
 package com.alleng.commonlibrary.exception;
 
-import java.util.ArrayList;
+import com.alleng.commonlibrary.constant.ErrorCode;
 
-public class AccessDeniedException extends CustomException{
-    public AccessDeniedException(String errorCode, String message) {
-        super(errorCode,message, new ArrayList<>());
+public class AccessDeniedException extends CustomException {
+    public AccessDeniedException(ErrorCode errorCode, Object... args) {
+        super(errorCode, args);
     }
 }

@@ -1,6 +1,16 @@
 services:
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - cache:/data
+    networks:
+      - my-network
 
- mysql:
+  mysql:
     image: mysql:8.0.30
     ports:
       - 3306:3306
@@ -14,9 +24,30 @@ services:
     networks:
       - my-network
 
+  zipkin:
+    image: openzipkin/zipkin
+    restart: always
+    ports:
+      - "9411:9411"
+    networks:
+      - my-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    networks:
+      - my-network
+
 networks:
   my-network:
     driver: bridge
 
 volumes:
   mysql:
+  cache:
+  rabbitmq:
