@@ -23,6 +23,12 @@ public enum ErrorCode {
     TOPIC_NAME_EXIST("80812",HttpStatus.CONFLICT, "Topic name {} exist"),
     TOPIC_NOT_FOUND("80813", HttpStatus.NOT_FOUND, "Topic with id {} not found"),
     NEWS_NOT_FOUND("80814", HttpStatus.NOT_FOUND, "News with id {} not found"),
+
+    // favorite
+    FAVORITE_NOT_FOUND("8083", HttpStatus.NOT_FOUND, "Favorite news not found with id {}"),
+
+    // access denice
+    ACCESS_DENICE("1000", HttpStatus.FORBIDDEN, "access denice!")
     ;
 
     private final String code;

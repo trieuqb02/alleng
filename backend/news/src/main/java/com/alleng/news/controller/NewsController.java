@@ -52,6 +52,13 @@ public class NewsController {
         return ResponseEntity.status(HttpStatus.OK).body(apiVM);
     }
 
+    @GetMapping(value = "/list/favorite", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiVM<List<NewsMV>>> getListFavorite(@RequestParam List<UUID> ids) {
+        List<NewsMV> mvList = newsService.getListFavorite(ids);
+        ApiVM<List<NewsMV>> apiVM = new ApiVM<>(mvList);
+        return ResponseEntity.status(HttpStatus.OK).body(apiVM);
+    }
+
     @GetMapping(value = "/list/rand", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiVM<List<NewsMV>>> getListRand(@RequestParam(name = "rand", defaultValue = PaginationConstant.DEFAULT_LIMIT) int rand) {
         List<NewsMV> mvList = newsService.getListRand(rand);

@@ -42,26 +42,29 @@ public class GatewayHandlerMappingConfig {
                         .uri("lb://identity"))
                 .route("identity-service", r -> r.path("/api/v1/permissions")
                         .and().method(HttpMethod.GET)
-                        .filters(f -> f.filter(authFilter).requestRateLimiter(c -> c
-                                .setRateLimiter(redisRateLimiter())
-                                .setKeyResolver(keyResolver()))
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver()))
                         )
                         .uri("lb://identity"))
                 .route("identity-service", r -> r.path(
                                 "/api/v1/roles",
                                 "/api/v1/roles/**")
                         .and().method(HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PUT)
-                        .filters(f -> f.filter(authFilter).requestRateLimiter(c -> c
-                                .setRateLimiter(redisRateLimiter())
-                                .setKeyResolver(keyResolver())))
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
                         .uri("lb://identity"))
                 .route("identity-service", r -> r.path(
                                 "/api/v1/users",
                                 "/api/v1/users/**")
                         .and().method(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT)
-                        .filters(f -> f.filter(authFilter).requestRateLimiter(c -> c
-                                .setRateLimiter(redisRateLimiter())
-                                .setKeyResolver(keyResolver())))
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
                         .uri("lb://identity"))
                 .route("news-service", r -> r.path(
                                 "/api/v1/source/all",
@@ -82,9 +85,10 @@ public class GatewayHandlerMappingConfig {
                                 "/api/v1/news/{newsId}"
                         )
                         .and().method(HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PUT)
-                        .filters(f -> f.filter(authFilter).requestRateLimiter(c -> c
-                                .setRateLimiter(redisRateLimiter())
-                                .setKeyResolver(keyResolver())))
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
                         .uri("lb://news"))
                 .route("file-service", r -> r.path("/api/v1/file/**")
                         .and().method(HttpMethod.GET)
@@ -92,6 +96,13 @@ public class GatewayHandlerMappingConfig {
                                 .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(keyResolver())))
                         .uri("lb://file"))
+                .route("favorite-service", r -> r.path("/api/v1/favorite/**")
+                        .and().method(HttpMethod.GET, HttpMethod.DELETE, HttpMethod.POST)
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
+                        .uri("lb://favorite"))
                 .build();
     }
 }
