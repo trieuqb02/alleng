@@ -24,4 +24,6 @@ public interface INewsService {
     PaginationMV<NewsMV> findByNewspaperListByDate(PaginationVM paginationVM);
 
     PaginationMV<NewsMV> findByNewspaperList(PaginationVM paginationVM);
+
+    List<NewsMV> getListFavorite(List<UUID> ids);
 }

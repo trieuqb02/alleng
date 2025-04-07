@@ -23,7 +23,7 @@
         <module>api-gateway</module>
         <module>identity</module>
         <module>news</module>
-        <module>favourite</module>
+        <module>favorite</module>
         <module>file</module>
     </modules>
 

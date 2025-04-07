@@ -293,4 +293,10 @@ public class NewsService implements INewsService {
         return new PaginationMV<>(collect, resultPage.getNumber(), resultPage.getSize(), resultPage.getTotalPages(), resultPage.getTotalElements(), resultPage.isLast());
     }
 
+    @Override
+    public List<NewsMV> getListFavorite(List<UUID> ids) {
+        List<News> list = newsRepository.findAllById(ids);
+        return list.stream().map(NewsMV::convertNewsMV).collect(Collectors.toList());
+    }
+
 }
