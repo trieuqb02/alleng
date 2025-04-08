@@ -13,14 +13,13 @@ import java.util.UUID;
 
 @FeignClient(
         name = "news",
-        url = "http://localhost:8081/api/v1/news/",
         configuration = FeignConfig.class
 )
 public interface NewsClient {
 
-    @GetMapping("{newsId}")
+    @GetMapping("/api/v1/news/{newsId}")
     ResponseEntity<ApiVM<NewsMV>> getNews(@PathVariable(name = "newsId") UUID newsId);
 
-    @GetMapping("list/rand")
+    @GetMapping("/api/v1/news/list/rand")
     ResponseEntity<ApiVM<List<NewsMV>>> getListRand();
 }

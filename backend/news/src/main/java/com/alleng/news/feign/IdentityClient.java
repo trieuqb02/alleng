@@ -6,14 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
-        name = "identity-service",
-        url = "http://localhost:8080/api/v1/auth",
+        name = "identity",
         configuration = IdentityConfig.class,
         fallback = IdentityFallBack.class
 )
 public interface IdentityClient {
 
-    @GetMapping("/public-key/{username}")
+    @GetMapping("/api/v1/auth/public-key/{username}")
     String getPublicKey(@PathVariable(name = "username") String username);
 
 }
