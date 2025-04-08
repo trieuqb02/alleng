@@ -52,7 +52,7 @@ public class NewsController {
         return ResponseEntity.status(HttpStatus.OK).body(apiVM);
     }
 
-    @GetMapping(value = "/list/favorite", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/list/ids", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiVM<List<NewsMV>>> getListFavorite(@RequestParam List<UUID> ids) {
         List<NewsMV> mvList = newsService.getListFavorite(ids);
         ApiVM<List<NewsMV>> apiVM = new ApiVM<>(mvList);
