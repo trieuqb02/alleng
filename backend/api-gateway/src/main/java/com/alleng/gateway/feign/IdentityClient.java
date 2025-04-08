@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
         name = "identity",
-        url = "http://localhost:8080/api/v1/auth",
         configuration = FeignConfig.class
 )
 public interface IdentityClient {
 
-    @GetMapping("/introspect")
+    @GetMapping("/api/v1/auth/introspect")
     Boolean introspect(@RequestParam String token);
 }

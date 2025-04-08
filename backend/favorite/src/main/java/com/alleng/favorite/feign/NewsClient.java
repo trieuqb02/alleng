@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.UUID;
 
 @FeignClient(
-        name = "news-service",
-        url = "http://localhost:8081/api/v1/news",
+        name = "news",
         configuration = FeignConfig.class
 )
 public interface NewsClient {
 
-    @GetMapping("/list/favorite")
+    @GetMapping("/api/v1/news/list/favorite")
     ResponseEntity<ApiVM<List<NewsMV>>> getListFavorite(@RequestParam List<UUID> ids);
 }
