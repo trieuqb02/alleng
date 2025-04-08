@@ -25,6 +25,7 @@
         <module>news</module>
         <module>favorite</module>
         <module>file</module>
+        <module>history</module>
     </modules>
 
     <properties>

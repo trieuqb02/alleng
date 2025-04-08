@@ -103,6 +103,13 @@ public class GatewayHandlerMappingConfig {
                                         .setRateLimiter(redisRateLimiter())
                                         .setKeyResolver(keyResolver())))
                         .uri("lb://favorite"))
+                .route("history-service", r -> r.path("/api/v1/history/**")
+                        .and().method(HttpMethod.GET, HttpMethod.DELETE, HttpMethod.POST)
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
+                        .uri("lb://history"))
                 .build();
     }
 }

@@ -25,7 +25,11 @@ public enum ErrorCode {
     NEWS_NOT_FOUND("80814", HttpStatus.NOT_FOUND, "News with id {} not found"),
 
     // favorite
-    FAVORITE_NOT_FOUND("8083", HttpStatus.NOT_FOUND, "Favorite news not found with id {}"),
+    FAVORITE_NOT_FOUND("80833", HttpStatus.NOT_FOUND, "Favorite news not found with id {}"),
+
+    // history
+    HISTORY_NOT_FOUND("80844", HttpStatus.NOT_FOUND, "History news not found with id {}"),
+
 
     // access denice
     ACCESS_DENICE("1000", HttpStatus.FORBIDDEN, "access denice!")
