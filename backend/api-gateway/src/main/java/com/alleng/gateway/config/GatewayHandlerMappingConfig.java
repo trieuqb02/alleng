@@ -58,8 +58,17 @@ public class GatewayHandlerMappingConfig {
                                         .setKeyResolver(keyResolver())))
                         .uri("lb://identity"))
                 .route("identity-service", r -> r.path(
+                                "/api/v1/users/list/ids"
+                        )
+                        .and().method(HttpMethod.GET)
+                        .filters(f -> f.requestRateLimiter(c -> c
+                                .setRateLimiter(redisRateLimiter())
+                                .setKeyResolver(keyResolver())))
+                        .uri("lb://identity"))
+                .route("identity-service", r -> r.path(
                                 "/api/v1/users",
-                                "/api/v1/users/**")
+                                "/api/v1/users/update",
+                                "/api/v1/users/info")
                         .and().method(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT)
                         .filters(f -> f.filter(authFilter)
                                 .requestRateLimiter(c -> c
@@ -110,6 +119,19 @@ public class GatewayHandlerMappingConfig {
                                         .setRateLimiter(redisRateLimiter())
                                         .setKeyResolver(keyResolver())))
                         .uri("lb://history"))
+                .route("comment-service", r -> r.path("/api/v1/comment/news/{newsId}", "/api/v1/comment/{commentId}")
+                        .and().method(HttpMethod.PUT, HttpMethod.POST)
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
+                        .uri("lb://comment"))
+                .route("comment-service", r -> r.path("/api/v1/comment/news/{newsId}")
+                        .and().method(HttpMethod.GET)
+                        .filters(f -> f.requestRateLimiter(c -> c
+                                .setRateLimiter(redisRateLimiter())
+                                .setKeyResolver(keyResolver())))
+                        .uri("lb://comment"))
                 .build();
     }
 }
