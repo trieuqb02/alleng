@@ -3,6 +3,7 @@ package com.alleng.identity.controller;
 import com.alleng.commonlibrary.payload.ApiVM;
 import com.alleng.identity.payload.request.UserVm;
 import com.alleng.identity.payload.response.UserMV;
+import com.alleng.identity.payload.response.UserMV2;
 import com.alleng.identity.service.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,13 @@ import java.util.UUID;
 public class UserController {
 
     IUserService userService;
+
+    @GetMapping("/list/ids")
+    public ResponseEntity<ApiVM<List<UserMV2>>> getUsersList(@RequestParam("ids") List<String> list) {
+        List<UserMV2> userMVList = userService.getUserList(list);
+        ApiVM<List<UserMV2>> apiVM = new ApiVM<>("Get user list successful", userMVList);
+        return ResponseEntity.status(HttpStatus.OK).body(apiVM);
+    }
 
     @PreAuthorize("READ_USER")
     @GetMapping("")

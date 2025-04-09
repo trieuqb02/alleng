@@ -7,6 +7,7 @@ import com.alleng.identity.entity.KeyStore;
 import com.alleng.identity.entity.User;
 import com.alleng.identity.payload.request.UserVm;
 import com.alleng.identity.payload.response.UserMV;
+import com.alleng.identity.payload.response.UserMV2;
 import com.alleng.identity.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -15,7 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -25,7 +30,7 @@ public class UserServiceImpl implements IUserService {
 
     PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository,@Lazy PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -52,9 +57,9 @@ public class UserServiceImpl implements IUserService {
 
         user.setFullName(userVm.fullName());
         user.setEmail(user.getEmail());
-        if(userVm.newPassword() != null){
+        if (userVm.newPassword() != null) {
             boolean checkPassword = passwordEncoder.matches(userVm.oldPassword(), user.getPassword());
-            if(checkPassword){
+            if (checkPassword) {
                 user.setPassword(passwordEncoder.encode(userVm.newPassword()));
             } else {
                 throw new BadRequestException(ErrorCode.PASSWORD_WRONG);
@@ -69,5 +74,26 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, username));
         return user.getKeyStore();
+    }
+
+    @Override
+    public List<UserMV2> getUserList(List<String> list) {
+        List<UserMV2> userMV2s = new LinkedList<>();
+        for (String username : list) {
+            Object result = userRepository.findByUsername2(username);
+            Object[] data = (Object[]) result;
+            String fullName = "";
+            String thumbnail = "";
+            if (data.length >= 1) {
+                fullName = data[0] != null ? (String) data[0] : "";
+                if (data.length > 1) {
+                    thumbnail = data[1] != null ? (String) data[1] : "";
+                }
+            }
+
+            userMV2s.add(new UserMV2(fullName, thumbnail));
+        }
+
+        return userMV2s;
     }
 }

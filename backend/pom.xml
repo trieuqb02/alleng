@@ -26,6 +26,7 @@
         <module>favorite</module>
         <module>file</module>
         <module>history</module>
+        <module>comment</module>
     </modules>
 
     <properties>

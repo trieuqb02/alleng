@@ -3,6 +3,7 @@ package com.alleng.identity.service;
 import com.alleng.identity.entity.KeyStore;
 import com.alleng.identity.payload.request.UserVm;
 import com.alleng.identity.payload.response.UserMV;
+import com.alleng.identity.payload.response.UserMV2;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,4 +17,6 @@ public interface IUserService {
     UserMV updateUser(UUID userId, UserVm userVm);
 
     KeyStore getKeyStoreFromUsername(String username);
+
+    List<UserMV2> getUserList(List<String> list);
 }
