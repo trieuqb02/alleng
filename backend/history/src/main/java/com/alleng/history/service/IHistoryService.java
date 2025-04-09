@@ -13,4 +13,6 @@ public interface IHistoryService {
     PaginationMV<HistoryWithNewsMV> getHistories(PaginationVM paginationVM, String subject);
 
     void deleteHistory(UUID historyId, String subject);
+
+    Long countTheTime(String subject);
 }
