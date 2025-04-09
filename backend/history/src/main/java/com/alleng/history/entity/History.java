@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -27,5 +28,5 @@ public class History extends Auditor {
 
     private String username;
 
-    private Date readAt;
+    private LocalDateTime readAt;
 }

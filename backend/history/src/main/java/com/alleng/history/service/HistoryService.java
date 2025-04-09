@@ -20,7 +20,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,7 +43,7 @@ public class HistoryService implements IHistoryService {
         History history = History.builder()
                 .newsId(newsId)
                 .username(subject)
-                .readAt(new Date())
+                .readAt(LocalDateTime.now())
                 .build();
 
         history = historyRepository.save(history);
@@ -81,5 +86,12 @@ public class HistoryService implements IHistoryService {
             throw new AccessDeniedException(ErrorCode.ACCESS_DENICE);
         }
         historyRepository.delete(history);
+    }
+
+    @Override
+    public Long countTheTime(String subject) {
+        LocalDateTime now = LocalDate.now().atStartOfDay();
+        LocalDateTime tomorrow = now.plusDays(1);
+        return historyRepository.countByUsernameAndReadAtBetween(subject, now, tomorrow);
     }
 }

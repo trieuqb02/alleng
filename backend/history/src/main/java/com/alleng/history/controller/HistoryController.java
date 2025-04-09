@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -33,6 +34,13 @@ public class HistoryController {
         HistoryMV historyMV = historyService.addHistory(newsId, jwt.getSubject());
         ApiVM<HistoryMV> apiVM = new ApiVM<>(historyMV);
         return ResponseEntity.status(HttpStatus.CREATED).body(apiVM);
+    }
+
+    @GetMapping("news/count")
+    public ResponseEntity<ApiVM<Long>> countTheTimes(@CurrentUser Jwt jwt){
+        Long count = historyService.countTheTime(jwt.getSubject());
+        ApiVM<Long> apiVM = new ApiVM<>(count);
+        return ResponseEntity.status(HttpStatus.OK).body(apiVM);
     }
 
     @GetMapping("")
