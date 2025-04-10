@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class IdentityFallBack implements IdentityClient {
@@ -15,7 +16,7 @@ public class IdentityFallBack implements IdentityClient {
     }
 
     @Override
-    public ResponseEntity<ApiVM<List<UserMV>>> getListUser(List<String> list) {
+    public ResponseEntity<ApiVM<List<UserMV>>> getListUser(List<UUID> list) {
         return ResponseEntity.ok(null);
     }
 }

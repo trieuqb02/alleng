@@ -82,7 +82,7 @@ public class SecurityConfig {
         return token -> {
             try {
                 JWTClaimsSet claimsSet = jwtUtilCommon.decodeToken(token);
-
+                System.out.println(claimsSet.getSubject());
                 String publicKeyBase64 = identityClient.getPublicKey(claimsSet.getSubject());
 
                 PublicKey rsaPublicKey = jwtUtilCommon.getPublicKeyFromBase64(publicKeyBase64);

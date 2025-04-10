@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.UUID;
 
 @FeignClient(
         name = "identity",
@@ -22,6 +23,6 @@ public interface IdentityClient {
     String getPublicKey(@PathVariable(name = "username") String username);
 
     @GetMapping("/api/v1/users/list/ids")
-    ResponseEntity<ApiVM<List<UserMV>>> getListUser(@RequestParam("ids") List<String> list);
+    ResponseEntity<ApiVM<List<UserMV>>> getListUser(@RequestParam("ids") List<UUID> list);
 
 }

@@ -8,7 +8,8 @@ public enum ErrorCode {
 
     // identity
     USERNAME_EXIST("80800", HttpStatus.CONFLICT, "Username {} exist"),
-    USERNAME_NOT_FOUND("80801", HttpStatus.NOT_FOUND, "Username {} not found"),
+    USERNAME_NOT_FOUND("8080", HttpStatus.NOT_FOUND, "Username {} not found"),
+    USER_NOT_FOUND("80801", HttpStatus.NOT_FOUND, "User with id {} not found"),
     PASSWORD_WRONG("80802", HttpStatus.UNAUTHORIZED, "Password {} wrong"),
     DECODE_TOKEN_FAIL("80803", HttpStatus.BAD_REQUEST, "Decode token {} failed"),
     INVALID_TOKEN("80804",HttpStatus.BAD_REQUEST, "Token {} invalid" ),

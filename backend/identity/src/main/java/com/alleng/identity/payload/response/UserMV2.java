@@ -1,4 +1,6 @@
 package com.alleng.identity.payload.response;
 
-public record UserMV2(String fullName, String thumbnail) {
+import java.util.UUID;
+
+public record UserMV2(UUID userId, String fullName, String thumbnail) {
 }

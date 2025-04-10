@@ -25,7 +25,7 @@ public class UserController {
     IUserService userService;
 
     @GetMapping("/list/ids")
-    public ResponseEntity<ApiVM<List<UserMV2>>> getUsersList(@RequestParam("ids") List<String> list) {
+    public ResponseEntity<ApiVM<List<UserMV2>>> getUsersList(@RequestParam("ids") List<UUID> list) {
         List<UserMV2> userMVList = userService.getUserList(list);
         ApiVM<List<UserMV2>> apiVM = new ApiVM<>("Get user list successful", userMVList);
         return ResponseEntity.status(HttpStatus.OK).body(apiVM);

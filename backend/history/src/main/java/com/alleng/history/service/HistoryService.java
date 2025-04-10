@@ -42,12 +42,12 @@ public class HistoryService implements IHistoryService {
     public HistoryMV addHistory(UUID newsId, String subject) {
         History history = History.builder()
                 .newsId(newsId)
-                .username(subject)
+                .userId(UUID.fromString(subject))
                 .readAt(LocalDateTime.now())
                 .build();
 
         history = historyRepository.save(history);
-        return new HistoryMV(history.getId(), history.getNewsId(), history.getUsername());
+        return new HistoryMV(history.getId(), history.getNewsId(), history.getUserId());
     }
 
     @Override
@@ -57,18 +57,18 @@ public class HistoryService implements IHistoryService {
 
         Pageable pageable = PageRequest.of(paginationVM.page() - 1, paginationVM.limit(), sort);
 
-        Page<History> resultPage = historyRepository.findAllByUsername(subject, pageable);
+        Page<History> resultPage = historyRepository.findAllByUserId(UUID.fromString(subject), pageable);
 
-        List<History> favorites = resultPage.getContent();
+        List<History> histories = resultPage.getContent();
 
-        List<UUID> ids = favorites.stream().map(History::getNewsId).toList();
+        List<UUID> ids = histories.stream().map(History::getNewsId).toList();
 
         List<NewsMV> newsMVList = Objects.requireNonNull(newsClient.getList(ids).getBody()).data();
 
         Map<UUID, NewsMV> newsMap = newsMVList.stream()
                 .collect(Collectors.toMap(NewsMV::uuid, Function.identity()));
 
-        List<HistoryWithNewsMV> collect = favorites.stream()
+        List<HistoryWithNewsMV> collect = histories.stream()
                 .map(fav -> {
                     NewsMV news = newsMap.get(fav.getNewsId());
                     return new HistoryWithNewsMV(fav.getId(), news);
@@ -82,7 +82,7 @@ public class HistoryService implements IHistoryService {
     public void deleteHistory(UUID historyId, String subject) {
         History history = historyRepository.findById(historyId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.HISTORY_NOT_FOUND));
-        if (!history.getUsername().equals(subject)) {
+        if (!history.getUserId().equals(UUID.fromString(subject))) {
             throw new AccessDeniedException(ErrorCode.ACCESS_DENICE);
         }
         historyRepository.delete(history);
@@ -92,6 +92,6 @@ public class HistoryService implements IHistoryService {
     public Long countTheTime(String subject) {
         LocalDateTime now = LocalDate.now().atStartOfDay();
         LocalDateTime tomorrow = now.plusDays(1);
-        return historyRepository.countByUsernameAndReadAtBetween(subject, now, tomorrow);
+        return historyRepository.countByUserIdAndReadAtBetween(UUID.fromString(subject), now, tomorrow);
     }
 }

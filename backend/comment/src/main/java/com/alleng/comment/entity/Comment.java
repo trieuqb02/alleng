@@ -26,7 +26,7 @@ public class Comment extends Auditor {
 
     private UUID newsId;
 
-    private String username;
+    private UUID userId;
 
     private UUID parentId;
 

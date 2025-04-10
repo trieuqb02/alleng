@@ -16,7 +16,7 @@ public interface IUserService {
 
     UserMV updateUser(UUID userId, UserVm userVm);
 
-    KeyStore getKeyStoreFromUsername(String username);
+    KeyStore getKeyStoreFromUserId(String userId);
 
-    List<UserMV2> getUserList(List<String> list);
+    List<UserMV2> getUserList(List<UUID> list);
 }

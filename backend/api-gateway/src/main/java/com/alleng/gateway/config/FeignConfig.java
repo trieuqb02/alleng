@@ -1,6 +1,7 @@
 package com.alleng.gateway.config;
 
 import feign.Retryer;
+import feign.codec.ErrorDecoder;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;

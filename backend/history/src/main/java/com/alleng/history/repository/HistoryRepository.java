@@ -10,6 +10,6 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface HistoryRepository extends JpaRepository<History, UUID> {
-    Long countByUsernameAndReadAtBetween(String username, LocalDateTime start, LocalDateTime end);
-    Page<History> findAllByUsername(String subject, Pageable pageable);
+    Long countByUserIdAndReadAtBetween(UUID userId, LocalDateTime start, LocalDateTime end);
+    Page<History> findAllByUserId(UUID userId, Pageable pageable);
 }

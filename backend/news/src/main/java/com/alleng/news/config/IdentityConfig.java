@@ -14,11 +14,6 @@ import java.util.concurrent.TimeUnit;
 public class IdentityConfig {
 
     @Bean
-    public ErrorDecoder errorDecoder() {
-        return new CustomErrorDecoder();
-    }
-
-    @Bean
     public RequestInterceptor requestInterceptor() {
         return new FeignRequestInterceptor();
     }

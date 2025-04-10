@@ -17,5 +17,5 @@ public interface IAuthService {
 
     SetTokenMV refresh(UUID userId, String token);
 
-    String getPublicKeyByUsername(String username);
+    String getPublicKeyByUserId(String userId);
 }
