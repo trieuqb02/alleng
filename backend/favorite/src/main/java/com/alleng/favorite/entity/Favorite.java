@@ -25,7 +25,7 @@ public class Favorite extends Auditor {
 
     private UUID newsId;
 
-    private String username;
+    private UUID userId;
 
     private Date favoriteAt;
 }

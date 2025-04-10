@@ -70,7 +70,7 @@ public class NewsAggregation {
                     "news", news,
                     "list", randomList
             );
-            viewCount++; // Increment after successful view
+            viewCount = 0; // Increment after successful view
         }
 
         return buildResponse(exchange, message, data, viewCount, viewDate);

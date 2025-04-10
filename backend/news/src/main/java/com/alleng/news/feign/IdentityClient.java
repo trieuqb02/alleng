@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 )
 public interface IdentityClient {
 
-    @GetMapping("/api/v1/auth/public-key/{username}")
-    String getPublicKey(@PathVariable(name = "username") String username);
+    @GetMapping("/api/v1/auth/public-key/{userId}")
+    String getPublicKey(@PathVariable(name = "userId") String userId);
 
 }

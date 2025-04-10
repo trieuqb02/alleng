@@ -11,11 +11,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorVM> handleFeignException(FeignException ex, WebRequest request) {
+        ErrorVM errorV = new ErrorVM(ex.getErrorCode(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.valueOf(ex.getStatus())).body(errorV);
+    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorVM> handleNotFoundException(NotFoundException ex, WebRequest request) {
@@ -55,7 +62,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, Object>> handleAuthenticationException(AuthenticationException authException, WebRequest request) {
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("error", "Unauthorized");
+        responseData.put("timestamp", new Date());
         responseData.put("message", authException.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
     }

@@ -38,7 +38,7 @@ public class CommentService implements ICommentService {
     public CommentMV createComment(UUID newsId, String subject, CommentVM vm) {
         Comment comment = Comment.builder()
                 .newsId(newsId)
-                .username(subject)
+                .userId(UUID.fromString(subject))
                 .content(vm.content())
                 .parentId(vm.parentId())
                 .commentAt(LocalDateTime.now())
@@ -47,7 +47,7 @@ public class CommentService implements ICommentService {
 
         comment = commentRepository.save(comment);
 
-        List<UserMV> list = Objects.requireNonNull(identityClient.getListUser(List.of(comment.getUsername())).getBody()).data();
+        List<UserMV> list = Objects.requireNonNull(identityClient.getListUser(List.of(comment.getUserId())).getBody()).data();
 
         return CommentMV.convertCommentMV(comment, list.getFirst(), 0);
     }
@@ -62,7 +62,7 @@ public class CommentService implements ICommentService {
 
         long totalSubComment = commentRepository.countByParentId(commentId);
 
-        List<UserMV> list = Objects.requireNonNull(identityClient.getListUser(List.of(comment.getUsername())).getBody()).data();
+        List<UserMV> list = Objects.requireNonNull(identityClient.getListUser(List.of(comment.getUserId())).getBody()).data();
 
         return CommentMV.convertCommentMV(comment, list.getFirst(), totalSubComment);
     }
@@ -77,16 +77,16 @@ public class CommentService implements ICommentService {
 
         List<Comment> comments = resultPage.getContent();
 
-        List<String> ids = comments.stream().map(Comment::getUsername).toList();
+        List<UUID> ids = comments.stream().map(Comment::getUserId).toList();
 
         List<UserMV> userMVList = Objects.requireNonNull(identityClient.getListUser(ids).getBody()).data();
 
-        Map<String, List<UserMV>> userMVMap = userMVList.stream()
-                .collect(Collectors.groupingBy(UserMV::fullName));
+        Map<UUID, List<UserMV>> userMVMap = userMVList.stream()
+                .collect(Collectors.groupingBy(UserMV::userId));
 
         List<CommentMV> collect = comments.stream()
                 .map(comment -> {
-                    List<UserMV> userList = userMVMap.get(comment.getUsername());
+                    List<UserMV> userList = userMVMap.get(comment.getUserId());
                     UserMV userMV = (userList != null && !userList.isEmpty()) ? userList.getFirst() : null;
 
                     long totalSubComment = commentRepository.countByParentId(comment.getId());

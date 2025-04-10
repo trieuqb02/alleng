@@ -3,7 +3,6 @@ package com.alleng.history.config;
 import feign.Request;
 import feign.RequestInterceptor;
 import feign.Retryer;
-import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,12 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class FeignConfig {
-
-    @Bean
-    public ErrorDecoder errorDecoder() {
-        return new CustomErrorDecoder();
-    }
-
+    
     @Bean
     public RequestInterceptor requestInterceptor() {
         return new FeignRequestInterceptor();

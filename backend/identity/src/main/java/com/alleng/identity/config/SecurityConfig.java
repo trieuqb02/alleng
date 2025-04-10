@@ -85,9 +85,9 @@ public class SecurityConfig {
             try {
                 JWTClaimsSet claimsSet = jwtUtilCommon.decodeToken(token);
 
-                String username = claimsSet.getSubject();
+                String userId = claimsSet.getSubject();
 
-                KeyStore keyStore = jwtUtil.getKeyStore(username);
+                KeyStore keyStore = jwtUtil.getKeyStore(userId);
 
                 PublicKey rsaPublicKey = jwtUtilCommon.getPublicKeyFromBase64(keyStore.getPublicKey());
 

@@ -26,7 +26,7 @@ public class History extends Auditor {
 
     private UUID newsId;
 
-    private String username;
+    private UUID userId;
 
     private LocalDateTime readAt;
 }

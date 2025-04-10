@@ -22,9 +22,9 @@ public class AuthController {
 
     IAuthService authService;
 
-    @GetMapping("/public-key/{username}")
-    public ResponseEntity<String> getPublicKey(@PathVariable String username) {
-        String publicKey = authService.getPublicKeyByUsername(username);
+    @GetMapping("/public-key/{userId}")
+    public ResponseEntity<String> getPublicKey(@PathVariable String userId) {
+        String publicKey = authService.getPublicKeyByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(publicKey);
     }
 

@@ -16,11 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -70,28 +68,23 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public KeyStore getKeyStoreFromUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, username));
+    public KeyStore getKeyStoreFromUserId(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND, userId));
         return user.getKeyStore();
     }
 
     @Override
-    public List<UserMV2> getUserList(List<String> list) {
+    public List<UserMV2> getUserList(List<UUID> list) {
         List<UserMV2> userMV2s = new LinkedList<>();
-        for (String username : list) {
-            Object result = userRepository.findByUsername2(username);
+        for (UUID userId : list) {
+            Object result = userRepository.findById2(userId);
             Object[] data = (Object[]) result;
-            String fullName = "";
             String thumbnail = "";
-            if (data.length >= 1) {
-                fullName = data[0] != null ? (String) data[0] : "";
-                if (data.length > 1) {
-                    thumbnail = data[1] != null ? (String) data[1] : "";
-                }
+            if (data.length >= 3) {
+                thumbnail = data[2] != null ? (String) data[2] : "";
             }
-
-            userMV2s.add(new UserMV2(fullName, thumbnail));
+            userMV2s.add(new UserMV2((UUID) data[0], (String) data[1], thumbnail));
         }
 
         return userMV2s;

@@ -37,19 +37,19 @@ public class FavoriteService implements IFavoriteService {
     public FavoriteMV addNews(UUID newsId, String subject) {
         Favorite favorite = Favorite.builder()
                 .newsId(newsId)
-                .username(subject)
+                .userId(UUID.fromString(subject))
                 .favoriteAt(new Date())
                 .build();
 
         favorite = favoriteRepository.save(favorite);
-        return new FavoriteMV(favorite.getId(), favorite.getNewsId(), favorite.getUsername());
+        return new FavoriteMV(favorite.getId(), favorite.getNewsId(), favorite.getUserId());
     }
 
     @Override
     public void deleteFavorite(UUID favoriteId, String subject) {
         Favorite favorite = favoriteRepository.findById(favoriteId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.FAVORITE_NOT_FOUND));
-        if (!favorite.getUsername().equals(subject)) {
+        if (!favorite.getUserId().equals(UUID.fromString(subject))) {
             throw new AccessDeniedException(ErrorCode.ACCESS_DENICE);
         }
         favoriteRepository.delete(favorite);
@@ -62,7 +62,7 @@ public class FavoriteService implements IFavoriteService {
 
         Pageable pageable = PageRequest.of(paginationVM.page() - 1, paginationVM.limit(), sort);
 
-        Page<Favorite> resultPage = favoriteRepository.findAllByUsername(subject, pageable);
+        Page<Favorite> resultPage = favoriteRepository.findAllByUserId(UUID.fromString(subject), pageable);
 
         List<Favorite> favorites = resultPage.getContent();
 

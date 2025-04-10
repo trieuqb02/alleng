@@ -69,7 +69,7 @@ public class JwtUtil {
     private JWTClaimsSet claimsSet(User user, TokenType tokenType) {
         if (tokenType.equals(TokenType.ACCESS_TOKEN)) {
             return new JWTClaimsSet.Builder()
-                    .subject(user.getUsername())
+                    .subject(String.valueOf(user.getId()))
                     .issuer("alleng.com")
                     .issueTime(new Date())
                     .expirationTime(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
@@ -117,7 +117,7 @@ public class JwtUtil {
         }
     }
 
-    public KeyStore getKeyStore(String username) {
-        return userService.getKeyStoreFromUsername(username);
+    public KeyStore getKeyStore(String userId) {
+        return userService.getKeyStoreFromUserId(userId);
     }
 }

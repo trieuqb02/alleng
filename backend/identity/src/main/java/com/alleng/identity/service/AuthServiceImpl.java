@@ -129,9 +129,9 @@ public class AuthServiceImpl implements IAuthService {
     public boolean introspect(String token) {
         try {
             JWTClaimsSet claimsSet = jwtUtilCommon.decodeToken(token);
-            String username = claimsSet.getSubject();
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, username));
+            String userId = claimsSet.getSubject();
+            User user = userRepository.findById(UUID.fromString(userId))
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND, userId));
             return jwtUtil.verifyToken(user.getKeyStore().getPublicKey(), token);
 
         } catch (ParseException e) {
@@ -159,9 +159,9 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public String getPublicKeyByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USERNAME_NOT_FOUND, username));
+    public String getPublicKeyByUserId(String userId) {
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND, userId));
         return user.getKeyStore().getPublicKey();
     }
 }
