@@ -119,7 +119,9 @@ public class GatewayHandlerMappingConfig {
                                         .setRateLimiter(redisRateLimiter())
                                         .setKeyResolver(keyResolver())))
                         .uri("lb://history"))
-                .route("comment-service", r -> r.path("/api/v1/comment/news/{newsId}", "/api/v1/comment/{commentId}")
+                .route("comment-service", r -> r.path(
+                                "/api/v1/comment/news/{newsId}",
+                                "/api/v1/comment/{commentId}")
                         .and().method(HttpMethod.PUT, HttpMethod.POST)
                         .filters(f -> f.filter(authFilter)
                                 .requestRateLimiter(c -> c
@@ -132,6 +134,38 @@ public class GatewayHandlerMappingConfig {
                                 .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(keyResolver())))
                         .uri("lb://comment"))
+                .route("subscription-service", r -> r.path(
+                                "/api/v1/subscription",
+                                "/api/v1/feature/all"
+                        )
+                        .and().method(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.POST)
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
+                        .uri("lb://subscription"))
+                .route("subscription-service", r -> r.path(
+                                "/api/v1/plan",
+                                "/api/v1/plan/{planId}"
+                        )
+                        .and().method(HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.POST)
+                        .filters(f -> f.filter(authFilter)
+                                .requestRateLimiter(c -> c
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(keyResolver())))
+                        .uri("lb://subscription"))
+                .route("subscription-service", r -> r.path("/api/v1/plan")
+                        .and().method(HttpMethod.GET)
+                        .filters(f -> f.requestRateLimiter(c -> c
+                                .setRateLimiter(redisRateLimiter())
+                                .setKeyResolver(keyResolver())))
+                        .uri("lb://subscription"))
+                .route("payment-service", r -> r.path("/api/v1/payment", "/api/v1/payment/{paymentId}")
+                        .and().method(HttpMethod.GET, HttpMethod.PUT)
+                        .filters(f -> f.requestRateLimiter(c -> c
+                                .setRateLimiter(redisRateLimiter())
+                                .setKeyResolver(keyResolver())))
+                        .uri("lb://payment"))
                 .build();
     }
 }
