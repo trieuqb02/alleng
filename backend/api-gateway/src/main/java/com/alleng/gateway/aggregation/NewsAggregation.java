@@ -1,7 +1,9 @@
 package com.alleng.gateway.aggregation;
 
+import com.alleng.gateway.constant.CodeType;
 import com.alleng.gateway.feign.HistoryClient;
 import com.alleng.gateway.feign.NewsClient;
+import com.alleng.gateway.feign.SubscriptionClient;
 import com.alleng.gateway.payload.response.ApiVM;
 import com.alleng.gateway.payload.response.NewsMV;
 import lombok.AccessLevel;
@@ -32,6 +34,8 @@ public class NewsAggregation {
 
     HistoryClient historyClient;
 
+    SubscriptionClient subscriptionClient;
+
     @GetMapping("/{newsId}")
     public ResponseEntity<ApiVM<Map<String, Object>>> getNewsAndRandomList(
             @PathVariable UUID newsId,
@@ -45,10 +49,17 @@ public class NewsAggregation {
 
         // Check authorization-based reading limit
         if (authHeader != null) {
-            Long readCount = Objects.requireNonNull(historyClient.countTheTime(authHeader).getBody()).data();
-            if (readCount >= EXPIRED_LIMITING) {
-                message = "The daily reading limit has expired!";
-                return buildResponse(exchange, message, data, viewCount, viewDate);
+
+            Boolean check = subscriptionClient.hasAccessToFeature(authHeader, CodeType.ACCESS_NOT_LIMITING).getBody();
+
+            if (check) {
+                viewCount = 0;
+            } else {
+                Long readCount = Objects.requireNonNull(historyClient.countTheTime(authHeader).getBody()).data();
+                if (readCount >= EXPIRED_LIMITING) {
+                    message = "The daily reading limit has expired!";
+                    return buildResponse(exchange, message, data, viewCount, viewDate);
+                }
             }
         }
 
@@ -70,7 +81,7 @@ public class NewsAggregation {
                     "news", news,
                     "list", randomList
             );
-            viewCount = 0; // Increment after successful view
+            viewCount++; // Increment after successful view
         }
 
         return buildResponse(exchange, message, data, viewCount, viewDate);

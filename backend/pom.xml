@@ -27,6 +27,8 @@
         <module>file</module>
         <module>history</module>
         <module>comment</module>
+        <module>subscription</module>
+        <module>payment</module>
     </modules>
 
     <properties>

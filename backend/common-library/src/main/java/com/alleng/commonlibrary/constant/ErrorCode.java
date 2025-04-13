@@ -31,6 +31,14 @@ public enum ErrorCode {
     // history
     HISTORY_NOT_FOUND("80844", HttpStatus.NOT_FOUND, "History news not found with id {}"),
 
+    // subscription
+    FEATURE_NOT_FOUND("80812", HttpStatus.NOT_FOUND, "Feature not found with id {}"),
+    FEATURE_CODE_EXIST("80813", HttpStatus.CONFLICT, "Feature code {} exist"),
+
+    PLAN_NOT_FOUND("80814", HttpStatus.NOT_FOUND, "Plan not found with id {}"),
+
+    // payment
+    PAYMENT_NOT_FOUND("80214", HttpStatus.NOT_FOUND, "payment not found with id {}"),
 
     // access denice
     ACCESS_DENICE("1000", HttpStatus.FORBIDDEN, "access denice!")
